@@ -11,7 +11,8 @@ class App extends React.Component {
       longitude: null,
       estacao: null,
       data: null,
-      icone: null
+      icone: null,
+      mensagemDeErro: null
     }
   }
 
@@ -40,22 +41,28 @@ class App extends React.Component {
   }
 
   obterLocalizacao = () => {
-    window.navigator.geolocation.getCurrentPosition(posicao => {
-      //1. construir um objeto Date que representa a data atual do sistema
-      let data = new Date()
-      //2. obter a estacao climatica usando a funcao obterEstacao
-      let estacao = this.obterEstacao(data, posicao.coords.latitude)
-      //3. obter o icone, usando o mapa que a gente acabou de fazer
-      let icone = this.icones[estacao]
-      //4. atualizar o estado do componente usando a função this.setState
-      this.setState({
-        latitude: posicao.coords.latitude,
-        longitude: posicao.coords.longitude,
-        estacao: estacao,
-        data: data,
-        icone: icone
-      })
-    })
+    window.navigator.geolocation.getCurrentPosition(
+      posicao => {
+        //1. construir um objeto Date que representa a data atual do sistema
+        let data = new Date()
+        //2. obter a estacao climatica usando a funcao obterEstacao
+        let estacao = this.obterEstacao(data, posicao.coords.latitude)
+        //3. obter o icone, usando o mapa que a gente acabou de fazer
+        let icone = this.icones[estacao]
+        //4. atualizar o estado do componente usando a função this.setState
+        this.setState({
+          latitude: posicao.coords.latitude,
+          longitude: posicao.coords.longitude,
+          estacao: estacao,
+          data: data.toLocaleString(),
+          icone: icone
+        })
+      },
+      erro => {
+        console.log(erro)
+        this.setState({ mensagemDeErro: 'Tente novamente mais tarde' })
+      }
+    )
   }
 
   render() {
@@ -75,17 +82,18 @@ class App extends React.Component {
                   </p>
                 </div>
                 <p className="text-center">
-                  {
-										this.state.latitude
-                    ? `Coords: ${this.state.latitude}, ${this.state.longitude}, Date: ${this.state.data}`
-                    : 'Clique no botão para saber sua estação climática'
-									}
+                  {this.state.latitude ?
+                    	`Coords: ${this.state.latitude}, ${this.state.longitude}, Date: ${this.state.data}`
+                    : this.state.mensagemDeErro ?
+                    	this.state.mensagemDeErro
+                    : 'Clique no botão para saber sua estação climática'}
                 </p>
-								<button
-								onClick={this.obterLocalizacao}
-								className='btn btn-outline-primary w-100 mt-2'>
-									Qual a minha estação?
-								</button>
+                <button
+                  onClick={this.obterLocalizacao}
+                  className="btn btn-outline-primary w-100 mt-2"
+                >
+                  Qual a minha estação?
+                </button>
               </div>
             </div>
           </div>
