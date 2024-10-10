@@ -17,4 +17,4 @@ export default class Loading extends Component {
 
 Loading.defaultProps = {
 	mensagem: 'Carregando'
-}
+} 
