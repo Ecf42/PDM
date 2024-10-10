@@ -8,21 +8,30 @@ export default class Busca extends Component {
   state = {
     termoDeBusca: ''
   }
-  onTermoAlterado = event => {
+  onTermoAlterado = (event) => {
     console.log(event.target.value)
+    this.setState({ termoDeBusca: event.target.value })
+  }
+  onFormSubmit = (event) => { 
+    event.preventDefault()
+    this.props.onBuscaRealizada(this.state.termoDeBusca)
   }
   render() {
     return (
-      <div className="flex flex-column">
-        <IconField iconPosition="left">
-          <InputIcon className="pi pi-search" />
-          <InputText
-            className="w-full text-center"
-            placeholder={this.props.dica}
-          />
-        </IconField>
-        <Button label="OK" className="p-button-outlined mt-2" />
-      </div>
+      <form onSubmit={this.onFormSubmit}>
+        <div className="flex flex-column border-rounded p-3 border-1">
+          <IconField iconPosition="left">
+            <InputIcon className="pi pi-search" />
+            <InputText
+              value={this.state.termoDeBusca}
+              className="w-full text-center"
+              placeholder={this.props.dica}
+              onChange={this.onTermoAlterado}
+            />
+          </IconField>
+          <Button label="OK" className="p-button-outlined mt-2" />
+        </div>
+      </form>
     )
   }
 }
